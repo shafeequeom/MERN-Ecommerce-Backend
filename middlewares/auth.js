@@ -18,7 +18,7 @@ exports.authCheck = async (req, res, next) => {
 };
 
 exports.adminCheck = async (req, res, next) => {
-  const { email } = req.user;
+  const { email } = res.user;
 
   const adminUser = await User.findOne({ email }).exec();
 
