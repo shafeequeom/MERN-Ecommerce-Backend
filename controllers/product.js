@@ -8,6 +8,10 @@ exports.create = async (req, res) => {
     const product = await new Product(req.body).save();
     res.json(product);
   } catch (error) {
-    res.status(400).send("Create category failed");
+    console.log(error);
+    // res.status(400).send("Create category failed");
+    res.status(400).json({
+      err: error.message,
+    });
   }
 };
