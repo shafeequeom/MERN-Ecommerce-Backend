@@ -15,3 +15,14 @@ exports.create = async (req, res) => {
     });
   }
 };
+
+exports.read = async (req, res) => {
+  try {
+    let products = await Product.find({});
+    res.json(products);
+  } catch (error) {
+    res.status(400).json({
+      err: error.message,
+    });
+  }
+};
