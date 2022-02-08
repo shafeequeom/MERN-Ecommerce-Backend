@@ -18,7 +18,6 @@ exports.create = async (req, res) => {
 
 exports.listAll = async (req, res) => {
   try {
-    console.log();
     let products = await Product.find({})
       .limit(parseInt(req.params.count))
       .populate("category")
@@ -26,6 +25,17 @@ exports.listAll = async (req, res) => {
       .sort([["created_at", "asc"]])
       .exec();
     res.json(products);
+  } catch (error) {
+    res.status(400).json({
+      err: error.message,
+    });
+  }
+};
+
+exports.remove = async (req, res) => {
+  try {
+    let deleted = await Product.findOneAndRemove({ slug: req.params.slug });
+    res.json(deleted);
   } catch (error) {
     res.status(400).json({
       err: error.message,
