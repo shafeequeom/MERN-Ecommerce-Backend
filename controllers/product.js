@@ -72,3 +72,20 @@ exports.update = async (req, res) => {
     });
   }
 };
+
+exports.list = async (req, res) => {
+  try {
+    const { sort, order, limit } = req.query;
+    let products = await Product.find({})
+      .limit(parseInt(limit))
+      .populate("category")
+      .populate("subCategories")
+      .sort([[sort, order]])
+      .exec();
+    res.json(products);
+  } catch (error) {
+    res.status(400).json({
+      err: error.message,
+    });
+  }
+};
