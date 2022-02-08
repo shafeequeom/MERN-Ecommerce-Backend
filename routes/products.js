@@ -13,14 +13,17 @@ const {
   read,
   update,
   list,
+  productsCount,
 } = require("../controllers/product");
 
 //route
-router.post("/product", authCheck, adminCheck, create);
+router.get("/products/total", productsCount);
+router.get("/products", list);
 router.get("/products/:count", listAll);
+
+router.post("/product", authCheck, adminCheck, create);
 router.delete("/product/:slug", authCheck, adminCheck, remove);
 router.get("/product/:slug", read);
 router.put("/product/:slug", authCheck, adminCheck, update);
-router.get("/products", list);
 
 module.exports = router;

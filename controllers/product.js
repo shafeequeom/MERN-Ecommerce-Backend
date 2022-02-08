@@ -75,14 +75,28 @@ exports.update = async (req, res) => {
 
 exports.list = async (req, res) => {
   try {
-    const { sort, order, limit } = req.query;
+    const { sort, order, page } = req.query;
+    const currentPage = page || 1;
+    const perPage = 3;
     let products = await Product.find({})
-      .limit(parseInt(limit))
+      .limit(parseInt(perPage))
+      .skip((currentPage - 1) * perPage)
       .populate("category")
       .populate("subCategories")
       .sort([[sort, order]])
       .exec();
     res.json(products);
+  } catch (error) {
+    res.status(400).json({
+      err: error.message,
+    });
+  }
+};
+
+exports.productsCount = async (req, res) => {
+  try {
+    let count = await Product.find({}).estimatedDocumentCount().exec();
+    res.json(count);
   } catch (error) {
     res.status(400).json({
       err: error.message,
