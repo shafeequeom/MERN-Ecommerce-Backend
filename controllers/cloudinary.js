@@ -17,7 +17,8 @@ exports.upload = async (req, res) => {
       url: result.secure_url,
     });
   } catch (error) {
-    res.status(400).send("Delete category failed");
+    console.log(error);
+    res.status(400).send("Upload image failed");
   }
 };
 exports.remove = async (req, res) => {
@@ -30,6 +31,6 @@ exports.remove = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(400).send("Delete category failed");
+    res.status(400).send("Delete image failed");
   }
 };

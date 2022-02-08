@@ -4,7 +4,6 @@ const slugify = require("slugify");
 exports.create = async (req, res) => {
   try {
     req.body.slug = slugify(req.body.title);
-    console.log(req.body);
     const product = await new Product(req.body).save();
     res.json(product);
   } catch (error) {
@@ -37,6 +36,37 @@ exports.remove = async (req, res) => {
     let deleted = await Product.findOneAndRemove({ slug: req.params.slug });
     res.json(deleted);
   } catch (error) {
+    res.status(400).json({
+      err: error.message,
+    });
+  }
+};
+
+exports.read = async (req, res) => {
+  try {
+    let product = await Product.findOne({ slug: req.params.slug })
+      .populate("category")
+      .populate("subCategories")
+      .exec();
+    res.json(product);
+  } catch (error) {
+    res.status(400).json({
+      err: error.message,
+    });
+  }
+};
+
+exports.update = async (req, res) => {
+  try {
+    req.body.slug = slugify(req.body.title);
+    const product = await Product.findOneAndUpdate(
+      { slug: req.params.slug },
+      req.body,
+      { new: true }
+    );
+    res.json(product);
+  } catch (error) {
+    console.log(error);
     res.status(400).json({
       err: error.message,
     });
