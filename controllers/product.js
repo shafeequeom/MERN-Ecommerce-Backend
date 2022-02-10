@@ -142,3 +142,24 @@ exports.starRating = async (req, res) => {
     });
   }
 };
+
+exports.listRelated = async (req, res) => {
+  try {
+    let productId = req.params.productId;
+    const product = await Product.findById(productId).exec();
+
+    let products = await Product.find({
+      _id: { $ne: product._id },
+      category: product.category,
+    })
+      .populate("category")
+      .populate("subCategories")
+      .limit(3)
+      .exec();
+    res.json(products);
+  } catch (error) {
+    res.status(400).json({
+      err: error.message,
+    });
+  }
+};
