@@ -47,12 +47,12 @@ const productSchema = new mongoose.Schema(
     brand: {
       type: String,
     },
-    //   rating: [
-    //     {
-    //       start: Number,
-    //       postedBy: { type: ObjectId, ref: "User" },
-    //     },
-    //   ],
+    ratings: [
+      {
+        star: { type: Number },
+        postedBy: { type: ObjectId, ref: "User" },
+      },
+    ],
   },
   { timestamps: true }
 );
