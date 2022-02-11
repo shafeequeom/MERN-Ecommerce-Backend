@@ -13,11 +13,13 @@ const {
   remove,
   list,
   getSubCategories,
+  categoryProducts,
 } = require("../controllers/category");
 
 //route
 router.post("/category", authCheck, adminCheck, create);
 router.get("/category/:slug", read);
+router.get("/category/products/:slug", categoryProducts);
 router.get("/categories", list);
 router.put("/category/:slug", authCheck, adminCheck, update);
 router.delete("/category/:slug", authCheck, adminCheck, remove);

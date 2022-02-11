@@ -1,4 +1,5 @@
 const Category = require("../models/category");
+const Product = require("../models/product");
 const SubCategory = require("../models/subCategory");
 const slugify = require("slugify");
 
@@ -51,4 +52,10 @@ exports.getSubCategories = (req, res) => {
   } catch (error) {
     res.status(400).send("Get sub-categories failed");
   }
+};
+
+exports.categoryProducts = async (req, res) => {
+  const category = await Category.findOne({ slug: req.params.slug });
+  const products = await Product.find({ category }).populate("category").exec();
+  res.json(products);
 };
