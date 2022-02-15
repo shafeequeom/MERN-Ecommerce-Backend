@@ -1,6 +1,7 @@
 const Product = require("../models/product");
 const User = require("../models/user");
 const slugify = require("slugify");
+const { populate } = require("../models/user");
 
 exports.create = async (req, res) => {
   try {
@@ -142,7 +143,6 @@ exports.starRating = async (req, res) => {
     });
   }
 };
-
 exports.listRelated = async (req, res) => {
   try {
     let productId = req.params.productId;
@@ -157,6 +157,27 @@ exports.listRelated = async (req, res) => {
       .limit(3)
       .exec();
     res.json(products);
+  } catch (error) {
+    res.status(400).json({
+      err: error.message,
+    });
+  }
+};
+
+const handleQuery = async (req, res, query) => {
+  const products = await Product.find({ $text: { $search: query } })
+    .populate("category", "_id name")
+    .populate("subCategories", "_id name")
+    .exec();
+  res.json(products);
+};
+exports.searchFilters = async (req, res) => {
+  try {
+    const { query } = req.body;
+    if (query) {
+      await handleQuery(req, res, query);
+    }
+    res.json([]);
   } catch (error) {
     res.status(400).json({
       err: error.message,
