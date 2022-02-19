@@ -2,6 +2,7 @@ const Product = require("../models/product");
 const Cart = require("../models/cart");
 const User = require("../models/user");
 const Coupon = require("../models/coupon");
+const Order = require("../models/order");
 
 exports.userCart = async (req, res) => {
   const { cart } = req.body;
@@ -65,7 +66,6 @@ exports.applyCoupon = async (req, res) => {
     const { coupon } = req.body;
 
     const validCoupon = await Coupon.findOne({ name: coupon }).exec();
-    console.log(validCoupon);
     if (validCoupon == null) {
       return res.json({
         err: "Invalid coupon",
@@ -73,20 +73,15 @@ exports.applyCoupon = async (req, res) => {
     }
 
     const user = await User.findOne({ email: res.user.email }).exec();
-    console.log(user);
 
     let { products, cartTotal } = await Cart.findOne({ orderedBy: user._id })
       .populate("products.product", "_id title price")
       .exec();
 
-    console.log(cartTotal);
-
     let totalAfterDiscount = (
       cartTotal -
       (cartTotal * validCoupon.discount) / 100
     ).toFixed(2);
-
-    console.log(totalAfterDiscount);
 
     const cart = await Cart.findOneAndUpdate(
       { orderedBy: user._id },
@@ -94,9 +89,39 @@ exports.applyCoupon = async (req, res) => {
       { new: true }
     ).exec();
 
-    console.log(cart);
-
     res.json(cart);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+exports.createOrder = async (req, res) => {
+  try {
+    const { paymentIntent } = req.body.stripeResponse;
+
+    const user = await User.findOne({ email: res.user.email }).exec();
+
+    let { products } = await Cart.findOne({ orderedBy: user._id }).exec();
+
+    let newOrder = await new Order({
+      products,
+      paymentIntent,
+      orderedBy: user._id,
+    }).save();
+
+    //Increment sold and decrement quantity
+    let bulkOptions = products.map((item) => {
+      return {
+        updateOne: {
+          filter: { _id: item.product._id },
+          update: { $inc: { quantity: -item.count, sold: +item.count } },
+        },
+      };
+    });
+
+    await Product.bulkWrite(bulkOptions, {});
+
+    res.json({ ok: true, order: newOrder });
   } catch (error) {
     console.log(error);
   }
