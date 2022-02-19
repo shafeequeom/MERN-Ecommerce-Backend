@@ -126,3 +126,13 @@ exports.createOrder = async (req, res) => {
     console.log(error);
   }
 };
+
+exports.getOrders = async (req, res) => {
+  const user = await User.findOne({ email: res.user.email }).exec();
+
+  const orders = await Order.find({ orderedBy: user._id })
+    .populate("products.product")
+    .exec();
+
+  res.json(orders);
+};

@@ -13,6 +13,7 @@ const {
   saveAddress,
   applyCoupon,
   createOrder,
+  getOrders,
 } = require("../controllers/user");
 
 //route
@@ -26,5 +27,6 @@ router.post("/user/coupon", authCheck, applyCoupon);
 
 //Coupon
 router.post("/user/order", authCheck, createOrder);
+router.get("/user/orders", authCheck, getOrders);
 
 module.exports = router;
