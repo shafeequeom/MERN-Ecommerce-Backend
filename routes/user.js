@@ -17,6 +17,7 @@ const {
   addToWishList,
   wishList,
   removeFromWishList,
+  createCODOrder,
 } = require("../controllers/user");
 
 //route
@@ -28,11 +29,12 @@ router.post("/user/address", authCheck, saveAddress);
 //Coupon
 router.post("/user/coupon", authCheck, applyCoupon);
 
-//Coupon
+//Order
 router.post("/user/order", authCheck, createOrder);
+router.post("/user/order/cod", authCheck, createCODOrder);
 router.get("/user/orders", authCheck, getOrders);
 
-//Coupon
+//Wishlist
 router.post("/user/wishlist", authCheck, addToWishList);
 router.get("/user/wishlist", authCheck, wishList);
 router.put("/user/wishlist/:productId", authCheck, removeFromWishList);
