@@ -149,11 +149,11 @@ exports.addToWishList = async (req, res) => {
 };
 
 exports.wishList = async (req, res) => {
-  const list = await User.findOne({ email: res.user.email })
+  const { wishlist } = await User.findOne({ email: res.user.email })
     .select("wishlist")
     .populate("wishlist")
     .exec();
-  res.json(list);
+  res.json(wishlist);
 };
 
 exports.removeFromWishList = async (req, res) => {
